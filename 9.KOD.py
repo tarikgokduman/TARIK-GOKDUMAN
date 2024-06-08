@@ -1,0 +1,49 @@
+
+histogram = {
+    100: 12, 101: 18, 102: 32, 103: 48, 104: 52, 105: 65, 106: 55, 107: 42, 108: 32,
+    109: 16, 110: 10, 140: 5, 141: 18, 142: 25, 143: 32, 144: 40, 145: 65, 146: 43,
+    147: 32, 148: 20, 149: 10, 150: 4
+}
+
+
+T0 = 100
+threshold = 1
+
+
+previous_T0 = None
+
+while True:
+    
+    G1 = [value for value in histogram if value > T0]
+    G2 = [value for value in histogram if value <= T0]
+    
+    
+    if len(G1) == 0:
+        m1 = n1 = 0
+    else:
+        m1 = sum([value * histogram[value] for value in G1]) / sum([histogram[value] for value in G1])
+        n1 = sum([histogram[value] for value in G1])
+    
+    if len(G2) == 0:
+        m2 = n2 = 0
+    else:
+        m2 = sum([value * histogram[value] for value in G2]) / sum([histogram[value] for value in G2])
+        n2 = sum([histogram[value] for value in G2])
+    
+    
+    T1 = (m1 + m2) / 2
+    
+    
+    if previous_T0 is not None and abs(T1 - previous_T0) < threshold:
+        break
+    else:
+        previous_T0 = T0
+        T0 = T1
+
+
+print("Yoğunluk Değeri Piksel Sayısı")
+for value, count in sorted(histogram.items()):
+    print(f"{value} {count}")
+
+
+print(f"Optimum Eşik Değeri: {T1}")
