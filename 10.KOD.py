@@ -1,0 +1,43 @@
+import numpy as np
+
+def hesapla_toplam_piksel(piksel_sayıları):
+    return piksel_sayıları.sum()
+
+def hesapla_olasılıklar(piksel_sayıları, toplam_piksel):
+    return piksel_sayıları / toplam_piksel
+
+def otsu_esik_degeri(intensite_değerleri, olasılıklar):
+    en_yüksek_varyans = 0
+    eşik_değeri = 0
+
+    for t in range(1, len(intensite_değerleri)):
+        arka_plan_olasılığı = np.sum(olasılıklar[:t])
+        nesne_olasılığı = np.sum(olasılıklar[t:])
+        
+        arka_plan_ortalama = np.sum(intensite_değerleri[:t] * olasılıklar[:t]) / arka_plan_olasılığı
+        nesne_ortalama = np.sum(intensite_değerleri[t:] * olasılıklar[t:]) / nesne_olasılığı
+        
+        varyans = arka_plan_olasılığı * nesne_olasılığı * (arka_plan_ortalama - nesne_ortalama) ** 2
+        
+        if varyans > en_yüksek_varyans:
+            en_yüksek_varyans = varyans
+            eşik_değeri = intensite_değerleri[t]
+    
+    return eşik_değeri
+
+
+intensite_değerleri = np.array([
+    100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110,
+    140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150
+])
+piksel_sayıları = np.array([
+    12, 18, 32, 48, 52, 65, 55, 42, 32, 16, 10,
+    5, 18, 25, 32, 40, 65, 43, 32, 20, 10, 4
+])
+
+
+toplam_piksel = hesapla_toplam_piksel(piksel_sayıları)
+olasılıklar = hesapla_olasılıklar(piksel_sayıları, toplam_piksel)
+eşik_değeri = otsu_esik_degeri(intensite_değerleri, olasılıklar)
+
+print("Otsu Yöntemi ile Bulunan En Uygun Eşik Değeri:", eşik_değeri)
